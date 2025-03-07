@@ -11,6 +11,7 @@ class WordPressNewsScreen extends StatefulWidget {
 
 class _WordPressNewsScreenState extends State<WordPressNewsScreen> {
   List<dynamic> _news = [];
+  String _message = '';
 
   @override
   void initState() {
@@ -18,11 +19,26 @@ class _WordPressNewsScreenState extends State<WordPressNewsScreen> {
     _fetchNews();
   }
 
+
   Future<void> _fetchNews() async {
-    final response = await http.get(Uri.parse('https://www.theverge.com/wp-json/wp/v2/posts?per_page=3'));
-    if (response.statusCode == 200) {
+    try {
+      final response = await http.get(Uri.parse('https://www.theverge.com/wp-json/wp/v2/posts?per_page=3'));
+
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _news = json.decode(response.body);
+        });
+      } else {
+        print('Failed to load news: ${response.statusCode}');
+        setState(() {
+          _message = 'Failed to load news. Please try again later.';
+        });
+      }
+    } catch (error) {
+      print('Error fetching news: $error');
       setState(() {
-        _news = json.decode(response.body);
+        _message = 'An error occurred. Please check your internet connection.';
       });
     }
   }
@@ -33,19 +49,20 @@ class _WordPressNewsScreenState extends State<WordPressNewsScreen> {
       appBar: AppBar(
         title: Text('WordPress News'),
       ),
-      body: ListView.builder(
-        itemCount: _news.length,
-        itemBuilder: (context, index) {
-          final newsItem = _news[index];
-          return ListTile(
-            title: Text(newsItem['title']['rendered']),
-            subtitle: Text(newsItem['excerpt']['rendered']),
-            onTap: () {
-              // Open the news link
-            },
-          );
-        },
-      ),
+      body: _news.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: _news.length,
+              itemBuilder: (context, index) {
+                final newsItem = _news[index];
+                return ListTile(
+                  title: Text(newsItem['title']['rendered']),
+                  subtitle: Text(newsItem['excerpt']['rendered']),
+                  onTap: () {},
+                );
+              },
+            ),
     );
   }
 }
+
