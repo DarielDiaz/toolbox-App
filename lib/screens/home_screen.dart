@@ -13,14 +13,14 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Toolbox App'),
-        backgroundColor: Color(0xFFFFB6C1), // Rosa pastel
+        backgroundColor: Color(0xFFFFB6C1), 
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFB6C1), Color(0xFFADD8E6)], // Rosa pastel a azul claro
+            colors: [Color(0xFFFFB6C1), Color(0xFFADD8E6)], 
           ),
         ),
         child: Padding(
